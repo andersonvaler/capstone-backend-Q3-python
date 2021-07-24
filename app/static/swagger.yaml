@@ -1,0 +1,219 @@
+---
+openapi: 3.0.1
+info:
+  title: KLCHAT
+  description: Projeto de conclusão do Q3 Kenzie Academy.
+  version: 1.0.0
+  contact:
+    email: andersonvaler@gmail.com
+servers:
+  - url: "/"
+
+paths:
+  #ROTA SIGNUP
+  /signup:
+    post:
+      tags:
+        - signup
+      summary: Cadastrar um usuário.
+      description: Esta cria um usuário e retorna os dados do mesmo.
+      operationId: signup
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              $ref: "#/components/schemas/signup"
+        required: true
+        responses:
+          "200":
+            schema:
+              $ref: "#/components/schemas/signup"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/signup"
+          "404":
+            content:
+              application/json:
+                schema:
+                  type: object
+                  example: { "Error": "Produto não encontrado." }
+                  properties:
+                    Error:
+                      type: string
+                      format: string
+          "400":
+            description: Produto não encontrado.
+            content:
+        x-codegen-request-body-name: body
+
+  #ROTA LOGIN
+  /login:
+    post:
+      tags:
+        - login
+      summary: Gerar bearer token.
+      description: Esta retorna gera um token de sessão do tipo bearer JWT.
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/login"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    format: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyNzA3MDk0NiwianRpIjoiYWY5YzZhN2ItMzMyYS00ZDgyLTk2NWItYjllODA2OTlkYzc2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImVtYWlsQGVtYWlsLmNvbSIsIm5iZiI6MTYyNzA3MDk0NiwiZXhwIjoxNjI3MDc0NTQ2fQ.5RD_3SM0rHxOYJGeyjXC9em5EVPoazdbD1UUy1IwWEQ"
+        404:
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  Error:
+                    type: string
+                    format: string
+                    example: "Usuário e/ou senha inválidos."
+      x-codegen-request-body-name: body
+
+  #ROTA PRODUTOS
+  /produtos/{prodId}:
+    get:
+      tags:
+        - Produtos
+      summary: Encontrar produto por id.
+      produces:
+        - application/json
+      description: Retorna um produto.
+      parameters:
+        - name: prodId
+          in: path
+          description: ID do produto
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "200":
+          schema:
+            $ref: "#/components/schemas/produto"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/produto"
+        "404":
+          content:
+            application/json:
+              schema:
+                type: object
+                example: { "Error": "Produto não encontrado." }
+                properties:
+                  Error:
+                    type: string
+                    format: string
+        "400":
+          description: Produto não encontrado.
+          content:
+
+#COMPONENTS
+components:
+  schemas:
+    #SCHEMA SIGNUP
+    signup:
+      type: object
+      required:
+        - tipo_usuario
+        - nome
+        - email
+        - senha
+        - telefone
+        - cpf
+        - cnpj
+      properties:
+        tipo_usuario:
+          type: string
+          enum: [cliente, lojista]
+        nome:
+          type: string
+          example: "John doe"
+        email:
+          type: string
+          example: "email@email.com"
+        senha:
+          type: string
+          example: "1234"
+        telefone:
+          type: string
+          example: "(38)9 2345-6789"
+        cpf:
+          description: Obrigatório se cnpj não for passado
+          type: string
+          nullable: true
+          example: "123.456.789-10"
+        cnpj:
+          description: Obrigatorio se cpf não for passado
+          type: string
+          nullable: true
+          example: "12.345.678/0001-00"
+    #SCHEMA LOGIN
+    login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: "email@email.com"
+        senha:
+          type: string
+          format: password
+          example: "1234"
+    #SCHEMA PRODUTO
+    produto:
+      type: object
+      required:
+        - descricao
+        - modelo
+        - marca
+        - qtd_estoque
+        - valor_unitario
+        - categoria
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        modelo:
+          type: string
+          format: string
+          example: "Garrafa 2l"
+        descricao:
+          type: string
+          format: string
+          example: "Fanta uva"
+        marca:
+          type: string
+          format: string
+          example: "Coca Cola"
+        qtd_estoque:
+          type: number
+          format: float
+          example: 90.0
+        valor_unitario:
+          type: number
+          format: float
+          example: 8.0
+        categoria:
+          type: string
+          format: string
+          example: "Bebidas"
+        lojista_id:
+          type: integer
+          format: int64
+          example: 2

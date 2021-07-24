@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_swagger_ui import get_swaggerui_blueprint
 
 
 def init_app(app: Flask):
@@ -23,3 +24,14 @@ def init_app(app: Flask):
     app.register_blueprint(bp_compras)
     app.register_blueprint(bp_categorias)
     app.register_blueprint(bp_perfil)
+
+    SWAGGER_URL = '/swagger'
+    API_URL = '../static/swagger.yaml'
+    swaggeruri_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': "KLCHAT"
+        }
+    )
+    app.register_blueprint(swaggeruri_blueprint, url_prefix=SWAGGER_URL)
